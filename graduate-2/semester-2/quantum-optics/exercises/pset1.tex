@@ -1,0 +1,370 @@
+\section{First Problem Set}
+\subsection{Berlin-Malinovsky 2.5}
+\textit{Numerically integrate the equations in problem 4, and show that the solutions as a function of ($t/T$) are consistent with the analytic onces for}
+\begin{enumerate}[label=(\alph*)]
+
+    \item $\omega T = 0; \; \Omega_0T = 0.5, 1, 2, 10; \; \omega_0T = 5$
+
+    \item $\omega_0T = 0; \; \Omega_0T = 0.5, 1, 2, 10; \; \omega T = 2$
+
+\end{enumerate}
+\vspace{1em}
+
+Problem 4 provides two different formulations we can use to solve this problem. I'm going to work with Eq.~(2.55), which can be written as the coupled equations
+\begin{align*}
+    \dot a_{1}(t) &= i \frac{\omega_{0}}{2} a_{1}(t) - i \abs{\Omega_{0}(t)} \cos{[\omega t - \phi(t)]} a_{2}(t), \\
+    \dot a_{2}(t) &= -i \frac{\omega_{0}}{2} a_{2}(t) - i \abs{\Omega_{0}(t)} \cos{[\omega t - \phi(t)]} a_{1}(t).
+\end{align*}
+
+I will assume a constant driving amplitude $\Omega_{0}$ and set $\phi(t)=0$ for simplicity, as a nonzero phase simply corresponds to a shift in the solution along the time axis and shouldn't affect the dynamics of the system. The system is taken to start in state $\ket{1}$, corresponding to the initial conditions given in problem 4:
+\begin{equation*}
+    a_1(0)=1, \qquad a_2(0)=0.
+\end{equation*}
+
+Since the problem specifies results in terms of the dimensionless variable $t/T$, I will introduce $\tau=t/T$ and perform all numerical integrations in this scaled time.
+\vspace{1em}
+
+In case (a), when $\omega=0$, the driving term becomes time-independent, $\cos(\omega t)=1$, and the equations reduce to
+\begin{align*}
+  \dot a_{1}(t) &= i \frac{\omega_{0}}{2} a_{1}(t) - i\Omega_{0}a_{2}(t), \\
+  \dot a_{2}(t) &= -i \frac{\omega_{0}}{2} a_{2}(t) - i\Omega_{0} a_{1}(t).
+\end{align*}
+
+For case (b), $\omega_{0}=0$, and $\Omega_{0}=\text{constant}$, so our differential equations are:
+\begin{align*}
+  \dot a_{1}(t) &= -i \Omega_{0}\cos{(\omega t)}a_{2}(t), \\
+  \dot a_{2}(t) &= -i\Omega_{0} \cos{(\omega t)} a_{1}(t).
+\end{align*}
+
+Now, we just need to solve these numerically. I chose to use Python, and got the following plot:
+\vspace{1em}
+
+\subsection{Berlin-Malinovsky 2.9}
+\textit{In the two-level problem, assume that $\Omega_{0}(t)$ has the form $\Omega_{0}(t)=\Omega_{0}\exp[-(t/T)^2]$. With initial conditions $\tilde c_{1}(-\infty)=1$, $\tilde c_{2}(-\infty)=0$, find approximate solutions for $\abs{\tilde c_{1}(t)}$ and $\abs{\tilde c_{1}(t)}$ assuming that $\abs{\Omega(t)T}\gg 1$.}
+\vspace{1em}
+
+To start out, I'm assuming that because we're using $c(t)$'s, that we're in the field interaction representation and therefore need to solve
+\begin{align*}
+  \dot \tilde c_{1}(t) &= i \frac{\delta}{2} \tilde c_{1}(t) - i \chi^{*}(t) \tilde c_{2}(t) - i \chi(t) e^{-2i\omega t} \tilde c_{2}(t) \\
+  \dot \tilde c_{2}(t) &= -i \frac{\delta}{2} \tilde c_{2}(t) - i\chi(t)\tilde c_{1}(t) - i \chi^{*}(t)e^{-2i\omega t} \tilde c_{1}(t).
+\end{align*}
+
+where $\chi(t)=\Omega_{0}(t)/2$ and $\delta=\omega-\omega_{0}$ ($\omega_{0}$ is the natural transition frequency of the two-level system and $\omega$ is the frequency of the applied driving field).
+\vspace{1em}
+
+We're told that $\Omega_{0}(t) = \Omega_{0}\exp [-(t/T)^{2}]$, so $\chi(t) = \frac{\Omega_{0}}{2} \exp [-(t/T)^{2}] = \chi^{*}(t)$. This makes the system that we need to solve:
+\begin{align*}
+  \dot \tilde c_{1}(t) &= i \frac{\delta}{2} \tilde c_{1}(t) - i \frac{\Omega_{0}}{2} e^{-(t/T)^{2}}  \tilde c_{2}(t) - i \frac{\Omega_{0}}{2} e^{-(t/T)^{2}} e^{-2i\omega t} \tilde c_{2}(t) \\
+  \dot \tilde c_{2}(t) &= -i \frac{\delta}{2} \tilde c_{2}(t) - i\frac{\Omega_{0}}{2} e^{-(t/T)^{2}}\tilde c_{1}(t) - i \frac{\Omega_{0}}{2} e^{-(t/T)^{2}}e^{-2i\omega t} \tilde c_{1}(t).
+\end{align*}
+
+The system is defined initially to be in state $\ket{1}$. If $\abs{\Omega_{0}(t)T} \gg 1$, that physically means that the Rabi frequency ($\Omega_{0}$; how fast the amplitudes of two atomic energy levels fluctuate) and $T$ (sets how fast the pulse envelope changes) ... follow the idea that the system's internal dynamics are fast compared to the change of the pulse.
+\vspace{1em}
+
+This condition that we're given essentially allows us to use the adiabatic approximation as well as the semiclassical dressed state representation to get an approximate solution. In the RWA (which I'm assuming we follow here; \textbf{EXPLAIN MORE}), the above equations reduce to:
+\begin{align*}
+  \dot\tilde c_{1}(t) &= i \frac{\delta}{2} \tilde c_{1}(t) - i \frac{\Omega_{0}}{2} e^{-\big(\frac{t}{T}\big)^{2}} \tilde c_{2}(t), \\
+  \dot\tilde c_{2}(t) &= -i \frac{\delta}{2} \tilde c_{2}(t) - i \frac{\Omega_{0}}{2} e^{-\big(\frac{t}{T}\big)^{2}} \tilde c_{1}(t).
+\end{align*}
+
+Now, to identify the Hamiltonian:
+\begin{equation*}
+    i\hbar \dv{t} 
+\end{equation*}
+
+
+\subsection{Berlin-Malinovsky 2.17}
+\textit{Consider the problem $y' = ay+b$, $y(0) = y_{0}$, and let $u_{n}$ be the numerical solution at time $t=nh$ given by Euler's method. Find an expression for $u_{n}$, compute $\lim_{n\to\infty}{u_{n}}$, show that the limit satisfies the differential equation and initial condition.}
+\vspace{1em}
+
+We need to numerically solve the equations we were just looking at in the previous problem.
+\vspace{1em}
+
+\subsection{Berlin-Malinovsky 2.13}
+\textit{Consider the problem $y'=-y^{2}$, $y(0)=1$.}
+
+\begin{enumerate}[label=(\alph*)]
+
+    \item \textit{Find the exact solution $y(1)$.}
+      \vspace{1em}
+
+      To solve this, we can just use separation of variables. First, we rewrite the differential equation as:
+      \begin{equation*}
+        \dv{y}{t} = -y^{2} \;\Rightarrow\; -\frac{\mathrm{d}y}{y^{2}} = \mathrm{d}t.
+      \end{equation*}
+
+      After integrating both sides of the above:
+      \begin{equation*}
+        \frac{1}{y} + C_{1} = t + C_{2} \;\Rightarrow\; \frac{1}{y} = t+C \;\Rightarrow\; y = \frac{1}{t+C}.
+      \end{equation*}
+
+      Now, using the initial condition $y(0)=1$, we find that $C=1$ and therefore:
+      \begin{equation*}
+        y=\frac{1}{t+1}.
+      \end{equation*}
+
+      At $t=1$, then, $\boxed{y=\frac{1}{2}}$.
+
+    \item \textit{Compute $y(1)$ by Euler's method with time step $h = 0.1, 0.05, 0.025, 0.0125$. Present a table (column 1: $h$, column 2: $u_{n}$, column 3: $u_{n}-y_{n}$, column 4: $(u_{n} - y_{n})/h$) and note that $t=nh=1$ and $y_{n}=y(1)$.}
+      \vspace{1em}
+    
+      Using the differential equation we were given, we can rewrite Euler's method as:
+      \begin{equation*}
+        u_{n+1} = u_{n}+hf(u_{n}) \;\Rightarrow\; u_{n+1} = u_{n}-hu_{n}^2.
+      \end{equation*}
+
+      So, as an example calculation, for $h=0.1$ and therefore $n=10$,
+      \begin{align*}
+        &u_{1} = u_{0}-hu_{0}^2 = 1-(0.1)(1)^{2} = 1-0.1 = 0.9 \\
+        &u_{2} = u_{1}-hu_{1}^{2} = 0.819 \\
+        &u_{3} = u_{2}-hu_{2}^{2} \approx 0.752 \\
+        &\;\;\vdots \notag \\
+        &u_{10} = u_{9}-hu_{9}^{2} \approx 0.482.
+      \end{align*}
+
+      Following this process for each value of $h$ gives us the following table.
+      \begin{table}[h!]
+      \centering
+      \begin{tabular}{|c|c|c|c|}
+        \hline
+        \rule{0pt}{3ex}$h$ & $u_{h}$ & $u_{h}-y_{h}$ & $(u_{h}-y_{h})/h$ \\
+        \hline
+        0.1    & 0.48171288 & -0.01828712 & -0.18287122 \\
+        0.05   & 0.49110492 & -0.00889508 & -0.17790153 \\
+        0.025  & 0.49561117 & -0.00438883 & -0.17555310 \\
+        0.0125 & 0.49781987 & -0.00218013 & -0.17441005 \\ 
+        \hline
+      \end{tabular}
+    \end{table}
+
+    \item \textit{Find the principle error function $E(t)$ and evaluate $E(1)$. Compare with column 4.}
+      \vspace{1em}
+
+      From class, we know that $E' = f_{y}(y)E - \frac{1}{2}y''$, $E(0)=0$. We can find each of the individual components we need, then shove everything together. First, let's find $f_{y}(y)$:
+      \begin{equation*}
+        f_{y}(y) = \dv{y}f(y) = \dv{y} \left[-y^{2}\right] = -2y.
+      \end{equation*}
+
+      Next, we can find $y''$:
+      \begin{equation*}
+        y'' = \frac{\mathrm{d}^{2}}{\mathrm{d}t^{2}}[y(t)] = \frac{\mathrm{d}^{2}}{\mathrm{d}t^{2}} \left[\frac{1}{t+1}\right] = \dv{t} \left[-\frac{1}{(t+1)^{2}}\right] = \frac{2}{(t+1)^{3}}.
+      \end{equation*}
+
+      Finally, let's put everything together:
+      \begin{equation*}
+        E'(t) = -\frac{2}{t+1} E(t) - \frac{1}{2} \frac{2}{(t+1)^{3}} \;\Rightarrow\; E'(t) + \frac{2}{t+1}E(t) = -\frac{1}{(t+1)^{3}}.
+      \end{equation*}
+
+      We need to solve this differential equation to find $E(t)$. We can use an integrating factor:
+      \begin{equation*}
+        \mu = e^{\int \frac{2}{t+1} \mathrm{d}t} = e^{2\ln{\abs{t+1}}} = (t+1)^{2}.
+      \end{equation*}
+
+      Multiply both sides of the differential equation by the integrating factor:
+      \begin{equation*}
+        (t+1)^{2}E'(t) + 2(t+1)E(t) = -\frac{1}{t+1}.
+      \end{equation*}
+
+      Notice that the left-hand-side is just the time derivative of $E(t)(t+1)^{2}$, so we can write:
+      \begin{equation*}
+        \dv{t} \left[E(t)(t+1)^{2}\right] = -\frac{1}{t+1}.
+      \end{equation*}
+
+      If we integrate, we get that:
+      \begin{equation*}
+        E(t)(t+1)^{2} = -\ln{(t+1)} \;\Rightarrow\; \boxed{E(t) = -\frac{\ln{(t+1)}}{(t+1)^{2}}.}
+      \end{equation*}
+
+      Therefore, $E(1)$ is:
+      \begin{equation*}
+        E(1) = -\frac{\ln{(2)}}{(2)^{2}} \approx \boxed{-0.17329.}
+      \end{equation*}
+
+    \item \textit{Perform Richardson extrapolation on the values in column 2. Keep 8 decimal digits for the tables in (b) and (d).}
+
+      In class, we found that for Euler's method:
+      \begin{align*}
+          A_{j0} &= y+O(h) \\
+          A_{j1} &= 2A_{j0} - A_{j-1,0} = y+O(h^{2}) \\
+          A_{j2} &= \frac{4A_{j1} - A_{j-1,1}}{3} = y+O(h^{3}) \\
+          A_{j3} &= \frac{8A_{j2}-A_{j-1,2}}{7} = y+O(h^{4}).
+      \end{align*}
+
+      So, for the first column of our table ($A_{j0}$), we just need to use Euler's method (which we've already done in (b)). For all of the other columns, we can use previous values to calculate what we need:
+      \begin{table}[h!]
+      \centering
+      \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        \rule{0pt}{3ex}$j$ & $h$ & $A_{j0}$ & $A_{j1}$ & $A_{j2}$ & $A_{j3}$ \\
+        \hline
+        0 & 0.1    & 0.48171288 &  &  &  \\
+        1 & 0.05   & 0.49110492 & 0.50049697 &  &  \\
+        2 & 0.025  & 0.49561117 & 0.50011742 & 0.49999090 &  \\
+        3 & 0.0125 & 0.49781987 & 0.50002857 & 0.49999895 & 0.50000010 \\
+        \hline
+      \end{tabular}
+    \end{table}
+
+\end{enumerate}
+
+\subsection{Higher-Order Error Terms in Euler’s Method}
+\textit{The numerical solution of $y' = f(y)$, $y(0)=y_{0}$ by Euler's method has an asymptotic expansion of the form $u_{n} = y_{n}+hE_{n}+h^{2}D_{n}+O(h^{3})$ as $h \rightarrow 0$, where $E_{n}=E(t_{n})$, $D_{n}=D(t_{n})$ for certain functions $E(t)$, $D(t)$.}
+
+\begin{enumerate}[label=(\alph*)]
+
+    \item \textit{The differential equation for $E(t)$ was derived in class; now find the equation for $D(t)$.}
+      \vspace{1em}
+
+      We are given that the numerical solution produced by Euler's method has the asymptotic expansion:
+      \begin{equation*}
+          u_n = y_n + hE_n + h^2 D_n + O(h^3), \quad \text{as } h \to 0.
+      \end{equation*}
+
+      We can define the error as:
+      \begin{equation*}
+          e_{n} = u_{n} - (y_{n} + hE_{n} + h^{2}D_{n}),
+      \end{equation*}
+
+      such that $e_{n}=O(h^{3})$. 
+
+      Now, we can plug this into Euler's method (which states that $u_{n+1} = u_n + h f(u_n)$). The left-hand-side becomes
+      \begin{equation*}
+          u_{n+1} = y_{n+1} + hE_{n+1} + h^{2}D_{n+1} + e_{n+1}.
+      \end{equation*}
+
+      The right-hand-side becomes
+      \begin{equation*}
+          u_{n} + hf(u_{n}) = y_{n} + hE_{n} + h^{2}D_{n} + e_{n} + hf(y_{n}+hE_{n}+h^{2}D_{n}+e_{n}).
+      \end{equation*}
+
+      Next, we need to Taylor expand $f(u_{n})$:
+      \begin{align*}
+        f(u_{n}) &= f(y_{n}+hE_{n}+h^{2}D_{n}+e_{n}) \\
+                 &= f(y_{n}) + f'(y_{n})(hE_{n}+h^{2}D_{n}+e_{n}) + \frac{1}{2}f''(y_{n})(hE_{n}+h^{2}D_{n}+e_{n})^{2} + O(h^{3}).
+      \end{align*}
+
+      Multiplying by $h$ and keeping terms through $O(h^3)$,
+      \begin{align*}
+        hf(u_{n}) &= hf(y_{n}) + hf'(y_{n})(hE_{n}+h^{2}D_{n}+e_{n}) + \frac{1}{2}hf''(y_{n})(hE_{n}+h^{2}D_{n}+e_{n})^{2} + O(h^{4}) \\
+                  &= hf(y_{n}) + h^{2}E_{n}f'(y_{n}) + h^{3}\left[\frac{1}{2}E_{n}^{2}f''(y_{n}) + D_{n}f'(y_{n})\right] + O(h^{4}).
+      \end{align*}
+
+      Note that the second line in the result above is after many simplifications that I didn't feel the need to re-type from my scratch paper. If we also expand the exact solution, we see that it satisfies
+      \begin{equation*}
+          y_{n+1} = y_{n} + y_{n}'h+\frac{1}{2}y_{n}''h^{2} + \frac{1}{6} y_{n}'''h^{3}+O(h^{4}),
+      \end{equation*}
+
+      with $y_n' = f(y_n)$.
+      \vspace{1em}
+
+      Substituting all expansions into Euler’s method and cancelling common terms yields
+      \begin{align*}
+        hE_{n+1} + h^{2}D_{n+1} &= hE_{n} + h^{2}D_{n} + h^{2}f'(y_{n})E_{n} + h^{3} \left[f'(y_{n})D_{n}+\frac{1}{2}f''(y_{n})E_{n}^{2}\right] \\
+        &\quad - \frac12 h^2 y_n'' - \frac16 h^3 y_n''' + O(h^4).
+      \end{align*}
+
+      Since $e_n, e_{n+1} = O(h^3)$, their contributions are absorbed into the higher-order remainder and don't affect the equations at order $h^2$.
+      \vspace{1em}
+
+      Dividing by $h$ and grouping like powers gives
+      \begin{align*}
+        E_{n+1} - E_n &= h\left[f'(y_n)E_n - \frac12 y_n''\right] + O(h^2), \\
+        D_{n+1} - D_n &= h\left[f'(y_n)D_n + \frac12 f''(y_n)E_n^2 - \frac16 y_n'''\right] + O(h^2).
+      \end{align*}
+
+      Taking the limit as $h \to 0$, we find the differential equations
+      \begin{align*}
+        E'(t) &= f'(y(t))E(t) - \frac12 y''(t), \\
+        \Aboxed{D'(t) &= f'(y(t))D(t) + \frac12 f''(y(t))E(t)^2 - \frac16 y'''(t).}
+      \end{align*}
+
+    \item \textit{Consider the problem $y'=y$, $y_{0}=1$. In class, we showed that $E(t)=-\frac{1}{2}te^{t}$. Find $D(t)$.}
+      \vspace{1em}
+
+      We just found that the second-order error coefficient satisfies
+      \begin{equation*}
+          D'(t) = f'(y(t))D(t) + \frac{1}{2} f''(y(t))E(t)^{2} - \frac{1}{6}y'''(t).
+      \end{equation*}
+
+      For this problem, $f(y)=y$, so $f'(y)=1$ and $f''(y)=0$. The exact solution of the given differential equation is
+      \begin{equation*}
+        \dv{y}{t} = y \;\Rightarrow\; \frac{\mathrm{d}y}{y} = \mathrm{d}t \;\Rightarrow\; \ln{(y)} = t \;\Rightarrow\; y(t) = e^{t}.
+      \end{equation*}
+
+      Therefore, $y'''(t) = e^{t}$. Substituting into the equation for $D'(t)$ gives
+      \begin{equation*}
+          D'(t) = D(t)-\frac{1}{6}e^{t},
+      \end{equation*}
+
+      with $D(0)=0$, since the asymptotic expansion
+      \begin{equation*}
+          u_n = y(t_n) + h E(t_n) + h^2 D(t_n) + O(h^3)
+      \end{equation*}
+
+      must agree with the exact initial value at $t=0$, which implies that all higher-order error coefficients go away at $t=0$.
+      \vspace{1em}
+
+      We can solve this linear ODE using an integrating factor. Writing the equation as
+      \begin{equation*}
+          D'(t) - D(t) = -\frac{1}{6}e^{t},
+      \end{equation*}
+
+      the integrating factor is $\mu(t) = e^{-t}$. Multiplying both sides by $\mu(t)$:
+      \begin{equation*}
+        D'(t)e^{-t} - D(t)e^{-t} = -\frac{1}{6}.
+      \end{equation*}
+
+      The left-hand-side of this equation is the derivative of $D(t)e^{-t}$, so
+      \begin{equation*}
+        \dv{t}\left[D(t)e^{-t}\right] = -\frac{1}{6}.
+      \end{equation*}
+
+      Integrating and using $D(0)=0$, we get that:
+      \begin{equation*}
+        D(t)e^{-t} = -\frac{1}{6}t \;\Rightarrow\; \boxed{D(t) = -\frac{1}{6}te^{t}.}
+      \end{equation*}
+
+    \item \textit{Compute $y(1)$ by Euler's method with time step $h=0.1, 0.05, 0.025, 0.0125$. Present a table (column 1: $h$, column 2: $u_{n}$, column 3: $u_{n}-y_{n}$, column 4: $(u_{n} - y_{n})/h$, column 5: $u_{n} - (y_{n}+hE_{n})$, column 6: $(u_{n} - (y_{n}+hE_{n}))/h^2$) and evaluate $E(1)$ and $D(1)$; are they consistent with the table?}
+      \vspace{1em}
+
+      We know that Euler's method states that $u_{n+1} = u_{n}+hf(u_{n})$, which in this case ($y'=y$), just means that $u_{n+1} = u_{n}+hu_{n}=(1+h)u_{n}$. If we evaluate a few steps:
+      \begin{align*}
+          &u_{1} = (1+h)u_{0}=(1+h) \\
+          &u_{2} = (1+h)u_{1} = (1+h)^{2} \\
+          &u_{3} = (1+h)u_{2} = (1+h)^{3} \\
+          &\;\;\vdots \notag \\
+          &u_{n} = (1+h)^{n}
+      \end{align*}
+
+      After computing all of the necessary values, we get a table that ends up looking like (again with eight decimal digits):
+      \begin{table}[h!]
+      \centering
+      \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        \rule{0pt}{3ex}$h$ & $u_{n}$ & $u_{n}-y_{n}$ & $(u_{n}-y_{n})/h$ & $u_{n} - (y_{n}+hE_{n})$ & $(u_{n} - (y_{n}+hE_{n}))/h^2$ \\
+        \hline
+        0.1    & 2.5937425 & -0.12453937 & -1.2453937 & 0.01137472
+               & 1.1374723 \\
+        0.05   & 2.6532977 & -0.06498412 & -1.2996825 & 0.00297292
+               & 1.1891690 \\
+        0.025  & 2.6850638 & -0.03321799 & -1.3287196 & 7.6053279$\times 10^{-4}$
+               & 1.2168525 \\
+        0.0125 & 2.7014849 & -0.01679689 & -1.3437510 & 1.9237372$\times 10^{-4}$
+               & 1.2311918 \\
+        \hline
+      \end{tabular}
+    \end{table}
+
+    Note that the exact solution at $y(1)$ is $e \approx 2.71828$, which is what column two is approaching. Also note that $E(1)$ is:
+    \begin{equation*}
+      E(1) = -\frac{1}{2}(1)e^{(1)} = \boxed{-\frac{1}{2}e \approx -1.35914,}
+    \end{equation*}
+
+    and $D(1)$ is:
+    \begin{equation*}
+      D(1) = -\frac{1}{6}(1)e^{(1)} = \boxed{-\frac{1}{6}e \approx -0.45305.}
+    \end{equation*}
+
+    Euler's method is first–order accurate, so the leading global error term is $O(h)$. As a result, column four correctly approaches $E(1)$, while the higher–order quantity in column six doesn't reliably converge to $D(1)$.
+
+\end{enumerate}

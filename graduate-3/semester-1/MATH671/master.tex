@@ -1,0 +1,42 @@
+\documentclass[a4paper,12pt]{article}
+\input{../preamble.tex}
+\usepackage{faktor}
+
+\makeatletter
+\DeclareRobustCommand*{\mfaktor}[3][]
+{
+   { \mathpalette{\mfaktor@impl@}{{#1}{#2}{#3}} }
+}
+\newcommand*{\mfaktor@impl@}[2]{\mfaktor@impl#1#2}
+\newcommand*{\mfaktor@impl}[4]{
+   \settoheight{\faktor@zaehlerhoehe}{\ensuremath{#1#2{#3}}}%
+   \settoheight{\faktor@nennerhoehe}{\ensuremath{#1#2{#4}}}%
+      \raisebox{-0.5\faktor@zaehlerhoehe}{\ensuremath{#1#2{#3}}}%
+      \mkern-4mu\diagdown\mkern-5mu%
+      \raisebox{0.5\faktor@nennerhoehe}{\ensuremath{#1#2{#4}}}%
+}
+\makeatother
+
+\DeclareMathOperator{\Ker}{ker}
+\DeclareMathOperator{\im}{Im}
+
+\title{NERS 570 -- Methods and Practice of Scientific Computing\vspace{-3em}}
+\date{}
+\begin{document}
+
+    \newgeometry{top=1.25in, bottom=2in, left=1.75in, right=1.75in}
+
+    \maketitle
+
+    Lecture notes from the graduate course \textit{Methods and Practice of Scientific Computing}, led by Dr. Brendan Kochunas at the University of Michigan in the Fall of 2026. Credit for the material covered in these notes is due to Dr. Kochunas, while the voice and typesetting in this document are my own.
+
+    \textit{Disclaimer:} This document will inevitably contain some mistakes --- both simple typos and legitimate errors. Keep in mind that these are the notes of a graduate student in the process of learning the material herself, so take what you read with a grain of salt. If you find mistakes and feel like telling me, I would be grateful and happy to hear from you, even for the most trivial of errors. You can reach me by email at.
+
+    \restoregeometry
+    \newpage
+
+    \tableofcontents
+    % start lessons
+    \input{08.31.2026.tex}
+    % end lesson
+\end{document}
