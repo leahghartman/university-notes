@@ -37,42 +37,22 @@ contains
     !   (4) Read the remainders in REVERSE ORDER -- this is the binary value
     !
     ! The following subroutine implements this.
-    subroutine to_binary(quotient, binary, size)
+    subroutine to_binary(decimal, binary)
         implicit none
 
         ! Input arguments
-        integer, intent(in) :: quotient
-        real, intent(inout) :: binary      ! TODO: need to change this to the actual type
-        integer, intent(in) :: size
+        integer          , intent(in)    :: decimal
+        character(len=32), intent(inout) :: binary
 
-        ! We're going to fill the array starting at the back, so we can satisfy
-        ! (4) easily.
-        binary
-    binary[size - 1] = '\0';
-    int index = size - 1;
-
-    // If the starting number is 0, then just fill things out without needing
-    // to even go into the while loop.
-    if (quotient == 0) {
-        binary[--index] = '0';
-    } else {
-        // While our quotient is > 0, we should continue to calculate remainders
-        while (quotient > 0) {
-            // Find the remainder when the quotient is divided by 2
-            int remainder = quotient % 2;
-
-            // Place the remainder at the end of the binary character array
-            // Note that the "+ '0'" just converts the integer value to a
-            // character literal.
-            binary[--index] = remainder + '0';
-
-            // Move onto the next quotient
-            quotient /= 2;
-        }
-    }
-}
-
-
+        ! As far as I'm aware, we don't technically have to accomplish this 
+        ! conversion in the same way as the C program. We should just be able
+        ! to use the B edit descriptor in a WRITE statement.
+        !
+        ! The 'B' specifies binary formatting, the first '32' specifies the total
+        ! field width (so the output will occupy exactly 32 character positions),
+        ! and the second number is the minimum number of digits to be printed,
+        ! so the character array will be padded with leading zeros.
+        write(binary, '(B32.32)') decimal
 
     end subroutine to_binary
 
