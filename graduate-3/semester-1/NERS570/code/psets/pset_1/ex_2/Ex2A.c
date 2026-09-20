@@ -80,7 +80,7 @@ int z_order2d(int x, int y) {
     return z_number;
 }
 
-// This function will cycle through the array and assigns it integer values from
+// This function will cycle through the array and assign it integer values from
 // 1 to N^2 in Z-order
 void fill_matrix(int *matrix, int N) {
     for (int i = 0; i < N; i++) {
@@ -115,11 +115,12 @@ int main(int argc, char *argv[]) {
 
     // Find the largest number in the matrix and calculate the largest width
     // we'll need to properly format the array/matrix.
-    int width = floor(log10(N*N)) + 1;
+    char width_probe[2];
+    int width = snprintf(width_probe, sizeof(width_probe), "%d", N*N);
 
     // Once the matrix is filled, print it out in the proper format
     // Note the size of the prefix so that we can properly space the LHS of the array
-    char *prefix = "A = [";
+    char *prefix = "A=[";
     int prefix_len = strlen(prefix);
  
     printf("%s", prefix);
@@ -133,13 +134,17 @@ int main(int argc, char *argv[]) {
         // For all of the entries, print the numbers using the proper width, 
         // which we found above and is fixed to the largest number printed
         for (int j = 0; j < N; j++) {
-            printf(" %*d", width, matrix[i*N+j]);
+            if (j == 0) {
+                printf("%*d", width, matrix[i*N+j]);
+            } else {
+                printf(" %*d", width, matrix[i*N+j]);
+            }
         }
 
         // If we're on the last line, print the ending bracket, otherwise print
         // a new line to continue the matrix
         if (i == N - 1) {
-            printf("]");
+            printf("]\n");
         } else {
             printf("\n");
         }

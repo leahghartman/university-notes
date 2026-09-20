@@ -1,12 +1,69 @@
 \newpage
-\section{What is Scientific Computing?}
-Scientific computing is primarily algorithms of a \textbf{numerical} sort for 
-mathematics of a \textbf{continuous} sort.
+\section{What is an algorithm?}
+An \textbf{algorithm} is, loosely, a finite sequence of steps producing a set of 
+output values from a given set of input values. This course asks a different, 
+narrower, question: given a task that a naive method solves in cost $O(n^{\alpha})$,
+can we solve it to the same accuracy in far less -- ideally $O(n\log{n})$ or 
+$O(n)$?
 
-On the theoretical side, we have 
+\subsection{A motivating pipeline}
+Given some physical model which we need to solve, we pass through three 
+separate stages:
 
-\subsection{Equations of Motion}
-For the motion of a particle in 
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+    box/.style={
+        rectangle, rounded corners,
+        draw=black, thick,
+        minimum width=2.8cm, minimum height=0.6cm,
+        align=center, font=\normalsize
+    },
+    arr/.style={-{Stealth[length=3mm]}, thick}
+]
+
+\node[box] (model) {Physical\\model};
+\node[box, right=1.5cm of model] (numerical) {Numerical\\method};
+\node[box, right=1.5cm of numerical] (data) {Data\\analysis};
+
+\draw[arr] (model) -- (numerical);
+\draw[arr] (numerical) -- (data);
+
+\end{tikzpicture}
+\label{fig:pipeline}
+\end{figure}
+
+The \textit{physical model} is the differential equation or partial differential
+equation we'd like to solve. The \textit{numerical method} discretizes and 
+computes a result from discretized boundary data. Finally, \textit{data analysis}
+interprets the output of the numerical method: convergence, error, visualization.
+
+\begin{note} 
+    This course lives in the middle box.
+\end{note}
+
+\subsection{Three lenses for analyzing an algorithm}
+Given some algorithm, we always ask three questions:
+\begin{enumerate}
+
+    \item \textbf{Numerical Stability.} Does rounding error stay controlled, 
+                           or amplify catastrophically?
+
+    \item \textbf{Accuracy.} How close is the computed output to the exact answer,
+                as a function of discretization or truncation parameters?
+
+    \item \textbf{Complexity.} How many operations (\textit{time}) and how much
+                  storage (\textit{memory}) does the algorithm use, as a function
+                  of the input size \textit{n}?
+
+\end{enumerate}
+
+\begin{note}
+    This course is concerned mostly with the question of complexity and
+    occasionally with accuracy. We fix a
+\end{note}
+
+
 \section{Normalization}
 \section{Particle Motion in Constant Crossed Fields}
 \section{Integrators, Stability, Accuracy, Conservation}
