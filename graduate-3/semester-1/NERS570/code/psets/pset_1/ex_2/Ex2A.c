@@ -26,7 +26,7 @@ void to_binary(int quotient, char *binary, int size) {
             // Find the remainder when the quotient is divided by 2
             int remainder = quotient % 2;
 
-            // Place the remainder at the end of the binary character array
+            // Place the remainder at the end of the binary character array.
             // Note that the "+ '0'" just converts the integer value to a
             // character literal.
             binary[--index] = remainder + '0';
@@ -43,7 +43,7 @@ void to_binary(int quotient, char *binary, int size) {
 //      (2) Interleaves the bits of the binary numbers
 //      (3) Converts the interleaved number back to decimal and returns it
 int z_order2d(int x, int y) {
-    // Note that the most amount of characters and unsigned integer can be when
+    // Note that the most amount of characters an unsigned integer can be when
     // represented in binary is 32 characters. This defines an array of characters 
     // with a total capacity of 32 bytes.
     char binary_x[33];
@@ -56,7 +56,7 @@ int z_order2d(int x, int y) {
         binary_y[i] = '0';
     }
 
-    // Convert x and y to binary values
+    // (1) Convert x and y to binary values
     to_binary(x, binary_x, 33);
     to_binary(y, binary_y, 33);
 
@@ -65,16 +65,14 @@ int z_order2d(int x, int y) {
     char int_binary[65];
     int_binary[64] = '\0';
     
-    // Assign a write index that we will cycle through to interleave the bits
+    // (2) Interleave the bits of the binary numbers
     int write_index = 0;
-
-    // Next, cycle through and interleave the bits of the binary numbers
     for (int i = 0; i < 32; i++) {
         int_binary[write_index++] = binary_x[i];
         int_binary[write_index++] = binary_y[i];
     }
 
-    // Convert the interleaved number back to decimal and return
+    // (3) Convert the interleaved number back to decimal and return
     int z_number = strtol(int_binary, NULL, 2);
 
     return z_number;
@@ -90,8 +88,8 @@ void fill_matrix(int *matrix, int N) {
     }
 }
 
-// Define main function with these arguments so we can accept command line 
-// input from the user when needed.
+// Define a main function with these arguments so we can accept command line 
+// input from the user.
 int main(int argc, char *argv[]) {
     // First, check that we have enough arguments to perform calculations.
     if (argc < 2) {
@@ -99,6 +97,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    // Check that the inputs the user provides are valid.
     int N;
     if (strcmp(argv[1], "2") == 0)       { N = 2; }
     else if (strcmp(argv[1], "4") == 0)  { N = 4; }
@@ -118,7 +117,7 @@ int main(int argc, char *argv[]) {
     char width_probe[2];
     int width = snprintf(width_probe, sizeof(width_probe), "%d", N*N);
 
-    // Once the matrix is filled, print it out in the proper format
+    // Once the matrix is filled, print it out in the proper format.
     // Note the size of the prefix so that we can properly space the LHS of the array
     char *prefix = "A=[";
     int prefix_len = strlen(prefix);
@@ -132,7 +131,9 @@ int main(int argc, char *argv[]) {
         }
 
         // For all of the entries, print the numbers using the proper width, 
-        // which we found above and is fixed to the largest number printed
+        // which we found above and is fixed to the largest number printed.
+        // If we're at the first column in the matrix, print without a leading
+        // space. Everywhere else, print with a space before.
         for (int j = 0; j < N; j++) {
             if (j == 0) {
                 printf("%*d", width, matrix[i*N+j]);
@@ -141,8 +142,8 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        // If we're on the last line, print the ending bracket, otherwise print
-        // a new line to continue the matrix
+        // If we're on the last line, print the ending bracket followed by a 
+        // new line. Otherwise print a new line to continue the matrix.
         if (i == N - 1) {
             printf("]\n");
         } else {

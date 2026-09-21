@@ -1,21 +1,22 @@
 program Ex2B
     implicit none
 
+    ! Declare all of the variables we will need in the program
     integer :: N, i, j, width
     character(len=10) :: arg, exe_name
     integer, dimension(:, :), allocatable :: matrix
     character(len=*), parameter :: prefix = "A=["
-
     character(len=32) :: row_fmt
     integer :: prefix_len
 
-    ! First, check that we have enough arguments to perform calculations
+    ! First, check that we have enough arguments to perform calculations.
     call get_command_argument(0, exe_name)
     if (command_argument_count() < 1) then
         print *, "Error: Missing an argument! Usage: ", trim(exe_name), " <2|4|8|16>"
         stop
     end if
 
+    ! Check that the inputs the user provides are valid.
     call get_command_argument(1, arg)
     select case (trim(arg))
         case ("2") ; N = 2
@@ -36,12 +37,20 @@ program Ex2B
     prefix_len = len(prefix)
     write(row_fmt, '("(I", i0, ", ", i0, "(1X,I", i0, "))")') width, N-1, width
 
+    ! Once the matrix is filled, print it out in the proper format.
+    ! First, print the prefix to the terminal, then print the first row of the
+    ! matrix using our pre-calculated row format. Then, write a new line.
     write(*, '(A)', advance='no') prefix
     write(*, row_fmt, advance='no') matrix(1, :)
     write(*, '(A)') ''
     do i = 2, N
+        ! For every row after the first, add spacing equal to the prefix length.
+        ! Then, in the row format we found, write the row to the terminal.
         write(*, '(A)', advance='no') repeat(' ', prefix_len)
         write(*, row_fmt, advance='no') matrix(i,:)
+
+        ! If we're on the last row of the matrix, print the ending bracket. 
+        ! Otherwise, print a new line.
         if (i == N) then
             write(*, "(A)") "]"
         else
@@ -87,22 +96,23 @@ contains
     end subroutine z_order2d
 
     ! This function will cycle through the array and assign it integer values
-    ! from 1 to N^2 in Z-order
+    ! from 1 to N^2 in Z-order.
     subroutine fill_matrix(matrix, N)
         implicit none
 
         ! Declare all of the proper inputs and outputs to the subroutine
         integer, dimension(:,:), allocatable, intent(inout) :: matrix
-        integer, intent(in)                              :: N
+        integer, intent(in)                                 :: N
 
         ! Declare all of the other variables that we need in this subroutine
-        integer :: i, j  ! Just loop counters
-        integer :: z_number
+        integer :: i, j      ! Just loop counters
+        integer :: z_number  ! Will hold the calculated Z number
 
+        ! Cycle through and fill the matrix with the proper Z number at the 
+        ! specified position.
         do i = 1, N
             do j = 1, N
                 call z_order2d(i-1, j-1, z_number)
-                !print *, z_number
                 matrix(i, j) = z_number + 1
             end do
         end do

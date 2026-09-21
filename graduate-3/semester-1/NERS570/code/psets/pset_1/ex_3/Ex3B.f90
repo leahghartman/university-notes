@@ -2,6 +2,7 @@ program Ex2B
     use iso_c_binding
     implicit none
 
+    ! Define an interface for the 
     interface
         subroutine fill_matrix(matrix, N) bind(c, name="fill_matrix")
             use iso_c_binding
@@ -28,6 +29,7 @@ program Ex2B
         stop
     end if
 
+    ! Check that the inputs the user provides are valid.
     call get_command_argument(1, arg)
     select case (trim(arg))
         case ("2") ; N = 2
@@ -48,12 +50,20 @@ program Ex2B
     prefix_len = len(prefix)
     write(row_fmt, '("(I", i0, ", ", i0, "(1X,I", i0, "))")') width, N-1, width
 
+    ! Once the matrix is filled, print it out in the proper format.
+    ! First, print the prefix to the terminal, then print the first row of the
+    ! matrix using our pre-calculated row format. Then, write a new line.
     write(*, '(A)', advance='no') prefix
     write(*, row_fmt, advance='no') matrix(1, :)
     write(*, '(A)') ''
     do i = 2, N
+        ! For every row after the first, add spacing equal to the prefix length.
+        ! Then, in the row format we found, write the row to the terminal.
         write(*, '(A)', advance='no') repeat(' ', prefix_len)
         write(*, row_fmt, advance='no') matrix(i,:)
+
+        ! If we're on the last row of the matrix, print the ending bracket. 
+        ! Otherwise, print a new line.
         if (i == N) then
             write(*, "(A)") "]"
         else

@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
 
+// Define an external (Fortran) function that we will call in the main function
+// below.
 extern void fill_matrix(int *matrix, int N);
 
-// Define main function with these arguments so we can accept command line 
+// Define a main function with these arguments so we can accept command line 
 // input from the user when needed.
 int main(int argc, char *argv[]) {
     // First, check that we have enough arguments to perform calculations.
@@ -14,6 +15,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    // Check that the inputs the user provides are valid.
     int N;
     if (strcmp(argv[1], "2") == 0)       { N = 2; }
     else if (strcmp(argv[1], "4") == 0)  { N = 4; }
@@ -24,7 +26,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Allocate the NxN matrix and call fill_matrix to fill it in
+    // Allocate the NxN matrix and call fill_matrix (the Fortran version)
+    // to fill it in.
     int *matrix = malloc((N*N) * sizeof(int));
     fill_matrix(matrix, N);
 
@@ -47,7 +50,9 @@ int main(int argc, char *argv[]) {
         }
 
         // For all of the entries, print the numbers using the proper width, 
-        // which we found above and is fixed to the largest number printed
+        // which we found above and is fixed to the largest number printed.
+        // If we're at the first column in the matrix, print without a leading
+        // space. Everywhere else, print with a space before.
         for (int j = 0; j < N; j++) {
             if (j == 0) {
                 printf("%*d", width, matrix[i*N+j]);

@@ -56,7 +56,7 @@ int z_order2d(int x, int y) {
         binary_y[i] = '0';
     }
 
-    // Convert x and y to binary values
+    // (1) Convert x and y to binary values.
     to_binary(x, binary_x, 33);
     to_binary(y, binary_y, 33);
 
@@ -65,23 +65,21 @@ int z_order2d(int x, int y) {
     char int_binary[65];
     int_binary[64] = '\0';
     
-    // Assign a write index that we will cycle through to interleave the bits
+    // (2) Interleave the bits of the binary numbers.
     int write_index = 0;
-
-    // Next, cycle through and interleave the bits of the binary numbers
     for (int i = 0; i < 32; i++) {
         int_binary[write_index++] = binary_x[i];
         int_binary[write_index++] = binary_y[i];
     }
 
-    // Convert the interleaved number back to decimal and return
+    // (3) Convert the interleaved number back to decimal and return.
     int z_number = strtol(int_binary, NULL, 2);
 
     return z_number;
 }
 
 // This function will cycle through the array and assign it integer values from
-// 1 to N^2 in Z-order
+// 1 to N^2 in Z-order.
 void fill_matrix(int *matrix, int N) {
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {

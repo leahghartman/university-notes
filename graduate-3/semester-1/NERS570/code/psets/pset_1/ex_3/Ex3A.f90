@@ -6,12 +6,14 @@
 
        ! Declare all of the proper inputs and outputs to the subroutine
        integer(c_int), intent(in), value :: N
-       integer(c_int), intent(inout) :: matrix(N, N)
+       integer(c_int), intent(inout)     :: matrix(N, N)
 
        ! Declare all of the other variables that we need in this subroutine
-       integer :: i, j  ! Just loop counters
-       integer :: z_number
+       integer :: i, j      ! Just loop counters
+       integer :: z_number  ! Will hold the calculated Z number
 
+       ! Cycle through and fill the matrix with the proper Z number at the
+       ! specified position.
        do i = 1, N
           do j = 1, N
              call z_order2d(i - 1, j - 1, z_number)
