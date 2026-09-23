@@ -1,14 +1,98 @@
 \documentclass{article}
-\usepackage{graphicx} % Required for inserting images
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{setspace}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
-\title{NERS570}
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{Ex1.bib}
+
+\title{A Photon Kinetic Framework for the OSIRIS Particle-in-Cell Code}
 \author{Leah Hartman}
-\date{September 2026}
 
 \begin{document}
 
 \maketitle
 
-\section{Introduction}
+Light propagating through density gradients of a plasma wakefield can undergo
+significant frequency upshifting through a process known as photon acceleration.
+The achievable frequency shift in this scheme is fundamentally limited only by
+the depletion of the drive beam, with previous 1D simulations~\cite{sandberg2023prl} showing that
+sufficiently energetic particle beam drivers can sustain the wake over distances
+long enough to produce shifts exceeding 40 times, accompanied by an increase in 
+pulse energy; quasi-3D simulations of the same scheme~\cite{sandberg2024pre} demonstrated shifts up
+to 10 times, limited by simulation resolution and driver evolution rather than
+the underlying physics. Capturing this effect in particle-in-cell (PIC) 
+simulations is computationally demanding, as resolving the laser's electromagnetic
+oscillations directly imposes strict resolution requirements via the 
+Courant-Friedrichs-Lewy (CFL) condition.
 
+We address this by implementing a photon kinetic model within the PIC code OSIRIS, 
+in which the laser pulse is instead represented as a distribution of macro-particles,
+each characterized by a position $\mathbf{x}(t)$ and wave vector $\mathbf{k}(t)$. The 
+equations of motion follow directly from Hamilton's equations associated with the
+Hamiltonian $\omega(\mathbf{x},\mathbf{k}, t)$~\cite{mendonca2001},
+\begin{subequations}
+\label{eq:hamilton}
+\begin{align}
+    \frac{d\mathbf{x}}{dt} &= \frac{\partial \omega}{\partial \mathbf{k}}, \label{eq:hamx}\\
+    \frac{d\mathbf{k}}{dt} &= -\frac{\partial \omega}{\partial \mathbf{x}}. \label{eq:hamk}
+\end{align}
+\end{subequations}
+
+For electromagnetic wave propagation in a cold, unmagnetized plasma, the local
+dispersion relation may be written as
+\begin{equation}
+    \omega(\mathbf{x},\mathbf{k}, t) = \sqrt{|\mathbf{k}|^2 + \omega_p^2(\mathbf{x},t)}.
+    \label{eq:dispersion}
+\end{equation}
+Substituting~\eqref{eq:dispersion} into~\eqref{eq:hamx} and~\eqref{eq:hamk} gives the
+group velocity and wave-vector evolution used in the particle push,
+\begin{equation}
+    \frac{\partial \omega}{\partial \mathbf{k}} = \frac{\mathbf{k}}{\sqrt{|\mathbf{k}|^2 + \omega_p^2(\mathbf{x}, t)}},
+\end{equation}
+while the evolution of the wave vector is governed by spatial variations in
+$\omega_p^2(\mathbf{x},t)$ and takes the form
+\begin{equation}
+    -\frac{\partial \omega}{\partial \mathbf{x}}
+    =
+    -\frac{1}{2\sqrt{|\mathbf{k}|^2 + \omega_p^2(\mathbf{x},t)}} \nabla \omega_p^2(\mathbf{x},t).
+\end{equation}
+
+These coupled equations of motion are advanced in time using a leapfrog-style
+scheme, in which $\mathbf{x}$ and $\mathbf{k}$ are updated on staggered
+half-steps, as outlined in Algorithm~\ref{alg:push}.
+
+\newpage
+\begin{algorithm}
+\caption{Leapfrog update of a photon macro-particle's position $\mathbf{x}$ and 
+wave vector $\mathbf{k}$ at each timestep, using the local plasma frequency 
+$\omega_p^2$ and its gradient gathered from the grid.}
+\label{alg:push}
+\begin{algorithmic}[1]
+\Require $\{\mathbf{x}_0^{(p)}, \mathbf{k}_0^{(p)}\}_{p=1}^{N}$ for $N$ macro-particles; grid field $\omega_p^2(\mathbf{x}, t)$
+\Ensure Updated $\{\mathbf{x}_n^{(p)}, \mathbf{k}_n^{(p)}\}$ at each timestep $n$
+\For{each timestep $n$}
+    \For{each macro-particle $p = 1, \dots, N$}
+        \State Gather $\omega_p^2(\mathbf{x}_n^{(p)}, t_n)$ and $\nabla \omega_p^2(\mathbf{x}_n^{(p)}, t_n)$ from the grid
+        \State $\displaystyle \mathbf{k}_{n+1/2}^{(p)} \gets \mathbf{k}_{n-1/2}^{(p)}
+            - \frac{\Delta t}{2\sqrt{|\mathbf{k}_{n-1/2}^{(p)}|^2 + \omega_p^2(\mathbf{x}_n^{(p)}, t_n)}}
+            \,\nabla \omega_p^2(\mathbf{x}_n^{(p)}, t_n)$
+        \State $\displaystyle \mathbf{x}_{n+1}^{(p)} \gets \mathbf{x}_n^{(p)}
+            + \Delta t \, \frac{\mathbf{k}_{n+1/2}^{(p)}}{\sqrt{|\mathbf{k}_{n+1/2}^{(p)}|^2 + \omega_p^2(\mathbf{x}_n^{(p)}, t_n)}}$
+    \EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+By replacing the electromagnetic solve with this reduced kinetic description, the
+model substantially reduces computational cost while retaining the relevant physics
+of photon acceleration. 
+
+
+\printbibliography
 \end{document}
