@@ -52,7 +52,13 @@ def butterfly_setup(N, tol=1e-8, depth=None, seed=0):
         # compress it with interp_decomp(tol) and store the *global*
         # skeleton column indices and X:
         #   ids[(0, 0, s)] = (cols[J], X)
-        raise NotImplementedError("stage 0")
+
+        rlo, rhi = iv[(0, 0)]
+        rows = _sample_rows(rng, rlo, rhi, len(cols))
+      
+        A = eval_block(rows, cols, x)
+        J, X = interp_decomp(A, tol)
+        ids[(0, 0, s)] = (cols[J], X)
 
     # ---- stages ell = 1..D-1: halve targets, merge degree siblings ----
     for ell in range(1, D):
@@ -65,7 +71,14 @@ def butterfly_setup(N, tol=1e-8, depth=None, seed=0):
                 # block on the rows [rlo, rhi) (all of them, or a
                 # sample), compress, and store
                 # ids[(ell, t, s)] = (Jc[J], X).
-                raise NotImplementedError("merge stage")
+
+                Jc = np.concatenate((ids[(ell-1, t//2, 2*s)][0], ids[(ell-1, t//2, 2*s+1)][0]))
+                rows = _sample_rows(rng, rlo, rhi, len(Jc))
+
+                A = eval_block(rows, Jc, x)
+                J, X = interp_decomp(A, tol)
+                ids[(ell, t, s)] = (Jc[J], X)
+              
 
     # ---- final stage: dense evaluation blocks at target leaves --------
     dense = {}
@@ -74,7 +87,10 @@ def butterfly_setup(N, tol=1e-8, depth=None, seed=0):
         # TODO(3): concatenate the two stage-(D-1) skeletons that reach
         # this target leaf and store the dense block
         #   dense[t] = eval_block(np.arange(rlo, rhi), Jc, x)
-        raise NotImplementedError("final stage")
+
+        Jc = np.concatenate((ids[(D-1, t//2, 0)][0], ids[(D-1, t//2, 1)][0]))
+        dense[t] = eval_block(np.arange(rlo, rhi), Jc, x)
+        
 
     return _compile(N, D, ids, dense)
 
@@ -143,7 +159,10 @@ def butterfly_apply(factors, xvec):
     """Return ~ P @ xvec using the compiled stages."""
     y = np.asarray(xvec, dtype=float)
     # TODO(4): apply the chain of compiled sparse factors, in order.
-    raise NotImplementedError("apply")
+
+    for factor in factors["stages"]:
+        y = factor @ y
+  
     return y
 
 
